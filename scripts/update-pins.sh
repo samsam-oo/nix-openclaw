@@ -55,18 +55,17 @@ pin_files=(
   "$gateway_npm_wrapper_dir/package-lock.json"
 )
 
+# The runtime plugin lock directory is emitted as one pathspec rather than an
+# enumerated file list: a release can drop a plugin, and `git add` on that
+# removed path fails after an earlier `git add --intent-to-add` has already
+# staged its deletion. The directory pathspec covers new, changed, and removed
+# lock files alike.
 pin_file_paths() {
   local file
   for file in "${pin_files[@]}"; do
     printf '%s\n' "${file#"$repo_root/"}"
   done
-  {
-    git -C "$repo_root" ls-files -- "$runtime_plugin_lock_rel_dir"
-    if [[ -d "$runtime_plugin_lock_dir" ]]; then
-      find "$runtime_plugin_lock_dir" -maxdepth 1 -type f \( -name '*.nix' -o -name '*.package-lock.json' -o -name 'report.json' \) -print \
-        | sed "s|^$repo_root/||"
-    fi
-  } | sort -u
+  printf '%s\n' "$runtime_plugin_lock_rel_dir"
 }
 
 set_gateway_npm_deps_hash() {

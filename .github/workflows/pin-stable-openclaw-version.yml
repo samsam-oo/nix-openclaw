@@ -100,7 +100,7 @@ jobs:
           done < <(scripts/update-pins.sh files)
           git add --intent-to-add -- "${pin_files[@]}"
           digest="$(
-            git diff --binary -- "${pin_files[@]}" \
+            git diff HEAD --binary -- "${pin_files[@]}" \
               | shasum -a 256 \
               | awk '{ print $1 }'
           )"
@@ -192,7 +192,7 @@ jobs:
           done < <(scripts/update-pins.sh files)
           git add --intent-to-add -- "${pin_files[@]}"
           digest="$(
-            git diff --binary -- "${pin_files[@]}" \
+            git diff HEAD --binary -- "${pin_files[@]}" \
               | shasum -a 256 \
               | awk '{ print $1 }'
           )"
@@ -331,13 +331,13 @@ jobs:
           done < <(scripts/update-pins.sh files)
           git add --intent-to-add -- "${pin_files[@]}"
 
-          if git diff --quiet -- "${pin_files[@]}"; then
+          if git diff --quiet HEAD -- "${pin_files[@]}"; then
             echo "No pin changes detected."
             exit 0
           fi
 
           promote_digest="$(
-            git diff --binary -- "${pin_files[@]}" \
+            git diff HEAD --binary -- "${pin_files[@]}" \
               | shasum -a 256 \
               | awk '{ print $1 }'
           )"
